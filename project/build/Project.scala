@@ -1,6 +1,7 @@
 import sbt._
+import de.element34.sbteclipsify._
 
-class Bnd4SbtPluginProject(info: ProjectInfo) extends PluginProject(info) {
+class Bnd4SbtPluginProject(info: ProjectInfo) extends PluginProject(info) with Eclipsify {
 
   lazy val aquteRepo = "aQute Repository" at "http://www.aqute.biz/repo"
 
