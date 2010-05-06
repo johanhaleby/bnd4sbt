@@ -48,12 +48,6 @@ private[bnd4sbt] trait BNDPluginProperties extends WithSBTProject {
 
   /** The classpath used by BND. Defaults to the mainCompilePath of this project. */
   protected def bndClasspath = project.mainCompilePath
-
-  /** The output path used by BND. Defaults to the outputPath of this project plus the value of BNDPlugin.bndFileName. */
-  protected def bndOutput = project.outputPath / bndFileName
-
-  /** The fileName as part of BNDPlugin.bndOutput. Defaults to projectName-projectVersion.jar. */
-  protected def bndFileName = "%s-%s.jar".format(project.name, project.version)
 }
 
 private[bnd4sbt] trait WithSBTProject {
