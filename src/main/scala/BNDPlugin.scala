@@ -32,15 +32,14 @@ trait BNDPlugin extends DefaultProject with BNDPluginProperties {
 
   override protected def packageAction = bndBundle
   
-  def allDependencyJars = Path.lazyPathFinder { 
+  private def allDependencyJars = Path.lazyPathFinder { 
     topologicalSort.flatMap { 
       case p: ScalaPaths => p.jarPath.getFiles.map(Path.fromFile); 
       case _ => Set() 
     } 
   }
 
-  //def proguardInJars = runClasspath --- proguardExclude
-  def proguardInJars = (((compileClasspath +++ allDependencyJars) ** "*.jar") getPaths) mkString(",")
+  def getEmbeddableDepenencies = (((compileClasspath +++ allDependencyJars) ** "*.jar") getPaths) mkString(",")
   def getSbtResources = mainResourcesPath toString
 
   private def createBundle() {
@@ -59,7 +58,7 @@ trait BNDPlugin extends DefaultProject with BNDPluginProperties {
     properties.setProperty("Private-Package", bndPrivatePackage mkString ",")
     properties.setProperty("Export-Package", bndExportPackage mkString ",")
     properties.setProperty("Import-Package", bndImportPackage mkString ",")
-    properties.setProperty(Constants.INCLUDE_RESOURCE, getSbtResources)
+    properties.setProperty(Constants.INCLUDE_RESOURCE, if(bndEmbedDependencies) {getSbtResources + getEmbeddableDepenencies } else { getSbtResources })
     properties
   }
 }

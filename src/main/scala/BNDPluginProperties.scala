@@ -54,6 +54,9 @@ private[bnd4sbt] trait BNDPluginProperties extends WithSBTProject {
 
   /** The fileName as part of BNDPlugin.bndOutput. Defaults to projectName-projectVersion.jar. */
   protected def bndFileName = "%s-%s.jar".format(project.name, project.version)
+  
+  /** Tells whether or not dependencies should be aggregated into the generated OSGi bundle */
+  protected def bndEmbedDependencies = false
 }
 
 private[bnd4sbt] trait WithSBTProject {
