@@ -20,11 +20,15 @@ trait BNDPlugin extends DefaultProject with BNDPluginProperties {
   protected val project = this
 
   override def packageOptions: Seq[PackageOption] = {
-    log info "JOhan!!!"
-    val mainAttributes = createManifest().getMainAttributes()
-    val manifestEntries = (new scala.collection.immutable.HashSet() ++ new scala.collection.jcl.HashSet[java.util.Map.Entry[Attributes.Name,String]](mainAttributes.entrySet().asInstanceOf[java.util.HashSet[java.util.Map.Entry[Attributes.Name,String]]]))
+    val mainAttributes = createManifest().getMainAttributes().entrySet
+    val jSet = new java.util.HashSet[java.util.Map.Entry[Attributes.Name,String]]()
+    val it = mainAttributes.iterator;
+    while(it.hasNext) {
+    	jSet.add(it.next.asInstanceOf[java.util.Map.Entry[Attributes.Name,String]])
+    }
+    val manifestEntries = new scala.collection.immutable.HashSet() ++ new scala.collection.jcl.HashSet[java.util.Map.Entry[Attributes.Name,String]](jSet)
     val osgiManifestAttributes = manifestEntries.map(entry => ManifestAttributes( (entry.getKey, entry.getValue) )).toList
-	val manifestInfo = getMainClass(false).map(MainClass(_)).toList ::: osgiManifestAttributes //manifestClassPath.map(cp => ManifestAttributes( (Attributes.Name.CLASS_PATH, cp) )).toList :::
+	val manifestInfo = super.packageOptions.toList ::: osgiManifestAttributes
     manifestInfo
   }
   
