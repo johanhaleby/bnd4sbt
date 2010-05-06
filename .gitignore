@@ -3,6 +3,8 @@ target
 lib_managed
 src_managed
 boot
+project/plugins
+.manager
 
 # Maven
 target
