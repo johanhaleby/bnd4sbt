@@ -41,7 +41,7 @@ trait BNDPlugin extends DefaultProject with BNDPluginProperties {
 
   //def proguardInJars = runClasspath --- proguardExclude
   def proguardInJars = (((compileClasspath +++ allDependencyJars) ** "*.jar") getPaths) mkString(",")
-  def getSbtResources = (mainResources getPaths) mkString(",")
+  def getSbtResources = mainResourcesPath toString
 
   private def createBundle() {
     val builder = new Builder
@@ -59,7 +59,7 @@ trait BNDPlugin extends DefaultProject with BNDPluginProperties {
     properties.setProperty("Private-Package", bndPrivatePackage mkString ",")
     properties.setProperty("Export-Package", bndExportPackage mkString ",")
     properties.setProperty("Import-Package", bndImportPackage mkString ",")
-    properties.setProperty(Constants.INCLUDE_RESOURCE, getSbtResources + proguardInJars)
+    properties.setProperty(Constants.INCLUDE_RESOURCE, getSbtResources)
     properties
   }
 }
