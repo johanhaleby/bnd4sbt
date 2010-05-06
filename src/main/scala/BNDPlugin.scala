@@ -9,7 +9,7 @@ package com.weiglewilczek.bnd4sbt
 
 import aQute.lib.osgi.{Builder, Constants}
 import java.util.Properties
-import sbt.DefaultProject
+import sbt.{DefaultProject, Path, ScalaPaths}
 
 trait BNDPlugin extends DefaultProject with BNDPluginProperties {
 
@@ -31,6 +31,17 @@ trait BNDPlugin extends DefaultProject with BNDPluginProperties {
   protected val project = this
 
   override protected def packageAction = bndBundle
+  
+  def allDependencyJars = Path.lazyPathFinder { 
+    topologicalSort.flatMap { 
+      case p: ScalaPaths => p.jarPath.getFiles.map(Path.fromFile); 
+      case _ => Set() 
+    } 
+  }
+
+  //def proguardInJars = runClasspath --- proguardExclude
+  def proguardInJars = (((compileClasspath +++ allDependencyJars) ** "*.jar") getPaths) mkString(",")
+  def getSbtResources = (mainResources getPaths) mkString(",")
 
   private def createBundle() {
     val builder = new Builder
@@ -48,7 +59,7 @@ trait BNDPlugin extends DefaultProject with BNDPluginProperties {
     properties.setProperty("Private-Package", bndPrivatePackage mkString ",")
     properties.setProperty("Export-Package", bndExportPackage mkString ",")
     properties.setProperty("Import-Package", bndImportPackage mkString ",")
-    properties.setProperty(Constants.INCLUDE_RESOURCE,  (mainResources getPaths).mkString(",") )
+    properties.setProperty(Constants.INCLUDE_RESOURCE, getSbtResources + proguardInJars)
     properties
   }
 }
